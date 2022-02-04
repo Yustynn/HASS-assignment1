@@ -1,22 +1,22 @@
 <!doctype html>
 <html>
 <head>
-<title>Lab 3 Assignment</title>
+<title>Assignment 1</title>
 <style>
-
-  /* CSS goes here 
-  
-    E.g. table {
+    td {
+        padding: 5px;
     }
-  
-  */
+    table {
+        background: rgb(101, 205, 228);
+    }
+
 
 </style>
 </head>
 <body>
 
 <h2>Singapore PSI table</h2>
-<h4 id="timestring"></h4>
+<h4>Data retrieved at: <span id="timestring"></span></h4>
 <table id="PSItable">
     <tr>
         <th>Metric</th>
@@ -29,23 +29,36 @@
     </tr>
 </table>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+
+const addTd = (text, tr) => {
+    const td = document.createElement('td')
+    td.textContent = text
+    tr.appendChild(td)
+}
 
 fetch('https://api.data.gov.sg/v1/environment/psi')
   .then(response => response.json())
   .then(data => {
+    const table = document.querySelector('#PSItable')
+    const readings = data.items[0].readings
+    console.log(readings)
 
-    /* JS code goes here.
-    
-    */
+    for (const metric in readings) {
+        const row = document.createElement('tr')
+        table.appendChild(row)
+
+        addTd(metric, row)
+
+        for (const field of ['national', 'central', 'west', 'east', 'north', 'south'])
+            addTd(readings[metric][field], row)
+    }
   
     let timestamp = data.items[0].update_timestamp;
-    let readings = data.items[0].readings;
     console.log(timestamp);
     console.log(readings);
     
-    $("#timestring").text(timestamp);
+    document.querySelector("#timestring").textContent = timestamp;
   
   });
 
